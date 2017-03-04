@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta charset="utf-8">
+    <style>
+  			body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  h1, h2, h3 {
+      font-weight: 400;
+      margin-bottom: 0;
+  }
+
+  .remark-slide-content h1 {
+      font-size: 3em;
+  }
+
+  .remark-slide-content h2 {
+      font-size: 2em;
+  }
+
+  .remark-slide-content h3 {
+      font-size: 1.6em;
+  }
+
+  .remark-slide-content {
+      background: #272822;
+      color: #f3f3f3;
+  }
+
+  .footnote {
+      position: absolute;
+      bottom: 3em;
+  }
+
+  li p {
+      line-height: 1.25em;
+  }
+
+  .red {
+      color: #fa0000;
+  }
+
+  .large {
+      font-size: 2em;
+  }
+
+  a, a>code {
+      color: #9fa28c;
+      text-decoration: none;
+  }
+
+  code {
+      background: none repeat scroll 0 0 #272822;
+      border: 1px solid #DEDEDE;
+      border-radius: 3px;
+      padding: 0 0.2em;
+  }
+
+  .remark-code, .remark-inline-code {
+      font-family: "Bitstream Vera Sans Mono", "Courier", monospace;
+  }
+
+  .remark-code-line-highlighted {
+      background-color: #373832;
+  }
+
+  .pull-left {
+      float: left;
+      width: 47%;
+  }
+
+  .pull-right {
+      float: right;
+      width: 47%;
+  }
+
+  .pull-right~p {
+      clear: both;
+  }
+
+  #slideshow .slide .content code {
+      font-size: 0.8em;
+  }
+
+  #slideshow .slide .content pre code {
+      font-size: 0.9em;
+      padding: 15px;
+  }
+
+  .main-title, .title {
+      background: #272822;
+      color: #777872;
+      text-shadow: 0 0 20px #333;
+  }
+
+  .title h1, .title h2, .main-title h1, .main-title h2 {
+      color: #f3f3f3;
+      line-height: 0.8em;
+  }
+
+  .code{
+
+  }
+
+  /* Custom */
+
+  .remark-code {
+      display: block;
+      padding: 0.5em;
+  }
+
+  		</style>
+  </head>
+  <body>
+    <textarea id="source">
+      # Blockchain for devs
+      ## Sesión 3: Introducción al desarrollo de Smart Contracts
+      ### Solidity
+      #### Carlos Buendía  ([@buendiadas](https://twitter.com/buendiadas))
+
+      ---
+      # Agenda
+
+      1. Arquitectura
+      2. Clientes
+         - Introducción
+         - Geth
+            - Instalación
+            - Inicialización de parámetros
+            - Creación de una blockchain privada
+            - Comienzos con la blockchain pública
+         - testRPC
+      3. Web3
+      3. Solidity
+      4. Ejemplos Smart Contracts
+         -DAO
+         -Crowdfunding
+         -Token
+      5. Ejercicio con Token
+
+      ---
+
+      # Estructura de un contrato
+
+        - Similar a clases en OOP
+
+        ```javascript
+          contract mortal is owned {
+
+          }
+        ```
+
+        - Referencia a Internal Storage (Variables de estado)
+          (Recordar account object)
+
+            - Nonce
+            - Ether balance
+            - Contract code
+            - The account's storage
+
+
+        - Computación descentralizada (functions)
+
+
+      ---
+      # Variables de estado
+
+      Almacenadas en el storage asociado a cada account
+
+      ```javascript
+
+      contract demo {
+
+        string public name = "buendiadas";
+        ....
+
+          ```
+      ---
+      # Funciones
+
+      Computación descentralizada en función de los inputs de la transacción.
+
+      ```javascript
+      function changeName(string _newName){
+          name = _newName; }
+
+
+      }
+      ```
+      ---
+      # Modificadores
+
+      Ejecución de condiciones previas a la ejecución de dicho contrato. Suelen utilizarse para generar restricciones
+
+      ```javascript
+      pragma solidity ^0.4.0;
+
+      contract owned {
+          function owned() { owner = msg.sender; }
+          address owner;
+
+          modifier onlyOwner {
+              if (msg.sender != owner)
+                  throw;
+              _;
+          }
+      }
+
+
+      contract mortal is owned {
+
+      }
+
+      }
+      ```
+      ---
+      # Funciones
+
+      Computación descentralizada en función de los inputs de la transacción.
+
+      ```javascript
+      function changeName(string _newName){
+          name = _newName; }
+
+
+      }
+      ```
+
+      # Eventos
+
+      Log de Ethereum (Recordar blockchain structure). Permiten subir información externa a la blockchain, donde se almacena únicamente el hash.
+
+      ```javascript
+      event NameChanged(string _oldName, string _newName);
+      function changeName(string _newName){
+          name = _newName;
+          NameChanged(name, _newName);
+
+        }
+      }
+      ```
+
+      ---
+      # Ejemplo
+
+      ###Metacoin
+
+      ####Creación de una moneda descentralizada
+
+      http://pastebin.com/d0nKHdP8
+
+      ---
+
+      # Ejemplo 2
+
+      ###CrowdSale
+
+      #### Lanzamiento de un crowdfunding descentralizado
+
+      http://pastebin.com/x7CAntp4
+      ---
+
+      # Ejemplo 3
+
+      ### DAO
+
+      #### Creación de un sistema de propuestas y votos
+
+      http://pastebin.com/z03DZ9dY
+      ---
+
+      # Ejercicio
+
+      ### Sistema de Propuestas de Inversión (Ver The DAO)
+        - Beginner:
+
+           - Cuando un usuario manda algo de Ether (>1) al contrato, recibe un voto.
+           - Cualquier persona con voto puede decidir mover todo el dinero a otra dirección (de momento, tomaremos esta decisión modificando un booleano)
+
+        - Experto:
+
+          -En función de la cantidad de Ether que reciba un contrato, este recibe n votos de decisión.
+          - Cualquier usuario puede crear una propuesta, especificando la dirección a la que se va a enviar.
+          - Si más del 50% del dinero total (votos totales) han votado mover a una dirección, se moverá
+      ---
+
+
+
+    </textarea>
+    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>

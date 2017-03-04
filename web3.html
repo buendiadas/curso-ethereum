@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta charset="utf-8">
+    <style>
+  			body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  h1, h2, h3 {
+      font-weight: 400;
+      margin-bottom: 0;
+  }
+
+  .remark-slide-content h1 {
+      font-size: 3em;
+  }
+
+  .remark-slide-content h2 {
+      font-size: 2em;
+  }
+
+  .remark-slide-content h3 {
+      font-size: 1.6em;
+  }
+
+  .remark-slide-content {
+      background: #272822;
+      color: #f3f3f3;
+  }
+
+  .footnote {
+      position: absolute;
+      bottom: 3em;
+  }
+
+  li p {
+      line-height: 1.25em;
+  }
+
+  .red {
+      color: #fa0000;
+  }
+
+  .large {
+      font-size: 2em;
+  }
+
+  a, a>code {
+      color: #9fa28c;
+      text-decoration: none;
+  }
+
+  code {
+      background: none repeat scroll 0 0 #272822;
+      border: 1px solid #DEDEDE;
+      border-radius: 3px;
+      padding: 0 0.2em;
+  }
+
+  .remark-code, .remark-inline-code {
+      font-family: "Bitstream Vera Sans Mono", "Courier", monospace;
+  }
+
+  .remark-code-line-highlighted {
+      background-color: #373832;
+  }
+
+  .pull-left {
+      float: left;
+      width: 47%;
+  }
+
+  .pull-right {
+      float: right;
+      width: 47%;
+  }
+
+  .pull-right~p {
+      clear: both;
+  }
+
+  #slideshow .slide .content code {
+      font-size: 0.8em;
+  }
+
+  #slideshow .slide .content pre code {
+      font-size: 0.9em;
+      padding: 15px;
+  }
+
+  .main-title, .title {
+      background: #272822;
+      color: #777872;
+      text-shadow: 0 0 20px #333;
+  }
+
+  .title h1, .title h2, .main-title h1, .main-title h2 {
+      color: #f3f3f3;
+      line-height: 0.8em;
+  }
+
+  .code{
+
+  }
+
+  /* Custom */
+
+  .remark-code {
+      display: block;
+      padding: 0.5em;
+  }
+
+  </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+      #Blockchain for devs
+      ## Sesión 3: Introducción al desarrollo de Smart Contracts: Web3
+
+      ### Carlos Buendía  ([@buendiadas](https://twitter.com/buendiadas))
+      ---
+
+      # Agenda
+
+      1. Introducción
+      2. Clientes
+         - Introducción
+         - Geth
+            - Instalación
+            - Inicialización de parámetros
+            - Creación de una blockchain privada
+            - Comienzos con la blockchain pública
+            - testRPC
+      3. `Web3`
+          - Funciones principales
+          - Realización de una transacción
+          - Compilando un contrato
+
+
+
+      4. Solidity
+      5. Ejemplos Smart Contracts
+         -DAO
+         -Crowdfunding
+         -Token
+      6. Ejercicio con Token
+
+      ---
+
+      # Arquitectura de una Dapp
+
+      ![image](img/arch-dapp.png)
+
+      ---
+
+      # Web3.js
+
+      - Principal interfaz para interactuación con la blockchain
+
+      - Ofrece, a través de javascript una [librería](https://github.com/ethereum/wiki/wiki/JavaScript-API) de herramientas completa para interactuar y desarrollar con la blockchain.
+
+      - Interactuación con otros servicios adicionales de Ethereum (keystore, whisper, swarm)
+
+      ### Ejemplos:
+
+      - Herramienta externa: Encriptación (web3.sha3())
+      - Utilización de la blockchain: web3.eth.sendTransaction(object)
+      - Utilización de servicios extra Ethereum: shh
+
+      ---
+
+      # Web3.js
+
+      - Instalación:
+
+       `npm install web3`
+
+      - Abre Geth
+
+       $ geth --networkid 03032017 --rpccorsdomain "*" --datadir "/home/satoshi/chain" --port "30303"  "db,eth,net,web3"
+
+
+      - Ejecuta el siguiente código: `node web3-test.js`
+
+          ```sh
+
+            var Web3 = require('web3');
+            var web3 = new Web3(
+            new Web3.providers.HttpProvider("http://localhost:8545"));
+            web3.eth.getBlock(0, function(error, result){
+                      if(!error)
+                          console.log(result)
+                      else
+                          console.error(error);
+            });
+          ```
+        ---
+
+
+        # Utilizando Web3:
+
+        ### Realización de una [transacción](https://github.com/ethereum/wiki/wiki/JavaScript-API#web3ethsendtransaction)
+
+        Previo: ¡Para poder realizar una transacción **necesitarás Ether**! En tu consola geth:
+
+
+           >web3.personal.newAccount() // Crea una nueva transacción
+           >web3.eth.accounts // Lista el array de cuentas
+           >web3.miner.setEtherbase (eth.accounts[0]) //Selecciona la cuenta 0 como cuenta principal para el minado
+           >web3.miner.start()
+
+        Una vez que hayas comenzado a minar, verás que el balance de la cuenta 0 deberá haber aumentado
+
+          > web3.eth.getBalance(web3. eth. accounts[0]);
+      ---
+      # Utilizando Web3:
+
+      ### Realización de una [transacción](https://github.com/ethereum/wiki/wiki/JavaScript-API#web3ethsendtransaction)
+
+      Previo: ¡Para poder realizar una transacción **necesitarás Ether**! En tu consola geth:
+
+          > web3.personal.newAccount() // Crea una nueva transacción
+          > web3.eth.accounts // Lista el array de cuentas
+          > web3.miner.setEtherbase (eth.accounts[0]) //Selecciona la cuenta 0 como cuenta principal para el minado
+          > web3.miner.start()
+
+      ---
+
+      # Utilizando Web3:
+
+        ### Realización de una [transacción](https://github.com/ethereum/wiki/wiki/JavaScript-API#web3ethsendtransaction)
+
+        Recordamos el objeto transaction:
+
+         *from, *to, *value, *data, *nonce
+
+         Transacción entre cuentas externas -->   Campo value > 0, no data
+
+            > web3.eth.sendTransaction(tx_object)
+            > web3.eth.sendTransaction ({from:web3.eth.accounts[0],
+                                          to: web3.eth.accounts[1],
+                                          value: web3.toWei(1, "ether")})
+            > web3.eth.getBalance(web3.eth.accounts[0])
+            > web3.eth.getBalance(web3.eth.accounts[1])
+
+      ---
+
+
+      # Utilizando Web3:
+
+        ### Recuperando [la transacción](https://github.com/ethereum/wiki/wiki/JavaScript-API#web3ethsendtransaction)
+
+        Recupera al campo txhash
+
+            > var transaction = web3.eth.getTransaction(blockNumber, indexOfTransaction);
+            > console.log(transaction);
+
+
+      ---
+
+      # Utilizando Web3:
+
+
+
+        ### Encriptando con [KECCAK-256](http://keccak.noekeon.org)
+
+
+            - En la consola de geth ejecuta
+
+                  > web3.sha3("Hello Ethereum Course")
+      ---
+      # Utilizando Web3
+
+
+      ###Compilando un contrato
+
+      Crea el siguiente archivo (compilecontract.js):
+
+
+      ```Javascript
+      var Web3 = require('web3');
+      var web3 = new Web3();
+      web3.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
+      var source = 'pragma solidity ^0.4.6; contract demo {string public name = "buendiadas"; function changeName(string _newName){name = _newName; } }';
+      var compiled = web3.eth.compile.solidity(source);
+      console.log(compiled);
+
+      console.log("ABI")
+      console.log( compiled.info.abiDefinition);
+      ```
+      Ejecuta:
+
+
+      ```sh
+
+      $ node compilecontract.js
+
+      ```
+      ---
+
+      # Utilizando Web3
+
+      ### Subiendo el contrato
+
+      Copia las anteriores lineas en un nuevo fichero(e.g. contractupload.js), y añade las siguientes:
+
+        ```Javascript
+            var nameContract= web3.eth.contract(compiled.info.abiDefinition);
+            var uploadedContract = nameContract.new({from:web3.eth.accounts[0], data: compiled.code, gas: 1000000}, function(e, contract){
+              if(!e) {
+
+                if(!contract.address) {
+                  console.log("Contract transaction send: TransactionHash: " + contract.transactionHash + " waiting to be mined...");
+
+                } else {
+                  console.log("Contract mined! Address: " + contract.address);
+                  console.log(contract);
+                }
+              }
+            });
+
+          ```
+
+      En terminal:
+
+      ```sh
+      $ node contractupload.js
+      ```
+
+      ---
+      # Utilizando Web3
+
+      ### Llamando a un contrato
+
+      Recupera los valores ABI, y contract Address del valor anterior
+
+      Con estos, sustituye en el siguiente script, y crea un nuevo fichero (getname.js)
+
+      ```Javascript
+      var Web3 = require('web3');
+      var web3 = new Web3();
+      web3.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
+
+      var ABI = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_newName","typ$
+      var contractAddress = "0xbbfd34ccf4bd62ec0d33d8b25c687c34888941af";
+      var contract = web3.eth.contract(ABI).at(contractAddress);
+
+      contract.name.call(function(data){
+              console.log(data)
+      });
+      ```
+      ---
+      # Utilizando Web3
+
+      ### Conectando con solidity
+
+      Recupera los valores ABI, y contract Address del valor anterior
+
+      Accede a el IDE oficial : http://ethereum.github.io/browser-solidity/#version=soljson-v0.4.9+commit.364da425.js
+
+
+
+      ---
+    </textarea>
+
+    <a href="ethereum2.html">
+
+
+    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
