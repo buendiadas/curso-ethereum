@@ -1,6 +1,6 @@
 # Ethereum course for devs in Spanish
 
-Slides created for the [Ethereum Madrid's Ethereum for Developers](http://ethereummadrid.com)course.
+Slides created for the [Ethereum Madrid's Ethereum for Developers](http://ethereummadrid.com) course.
 
 Agenda: 
 
