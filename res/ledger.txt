@@ -1,0 +1,14 @@
+---Balances0---
+Carlos=1000000000BTC
+Alice=0BTC
+---TX0---
+Carlos->Alice
+100BTC
+---TX1---
+Carlos->Alice
+10BTC
+---TX2---
+Alice->Carlos
+5BTC
+
+
