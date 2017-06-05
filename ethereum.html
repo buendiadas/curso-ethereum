@@ -5,14 +5,20 @@
     <meta charset="utf-8">
     <style>
   			body {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-family: "Titillium Web", Helvetica, Arial, sans-serif;
+      font-weight: lighter;
+
   }
 
   h1, h2, h3 {
-      font-weight: 400;
+      font-weight: lighter;
       margin-bottom: 0;
   }
 
+  .remark-slide-content {
+      background: #242E47;
+      color: white;
+  }
   .remark-slide-content h1 {
       font-size: 3em;
   }
@@ -25,10 +31,7 @@
       font-size: 1.6em;
   }
 
-  .remark-slide-content {
-      background: #272822;
-      color: #f3f3f3;
-  }
+
 
   .footnote {
       position: absolute;
@@ -39,28 +42,23 @@
       line-height: 1.25em;
   }
 
-  .red {
-      color: #fa0000;
-  }
-
-  .large {
-      font-size: 2em;
-  }
 
   a, a>code {
-      color: #9fa28c;
+      color: white;
+      font-weight:bold;
       text-decoration: none;
   }
 
   code {
-      background: none repeat scroll 0 0 #272822;
+      background: none repeat scroll 0 0 #82ffd5;
+      color: black;
       border: 1px solid #DEDEDE;
       border-radius: 3px;
       padding: 0 0.2em;
   }
 
   .remark-code, .remark-inline-code {
-      font-family: "Bitstream Vera Sans Mono", "Courier", monospace;
+      font-family: "Titillium Web", "Courier", monospace;
   }
 
   .remark-code-line-highlighted {
@@ -92,12 +90,12 @@
 
   .main-title, .title {
       background: #272822;
-      color: #777872;
+      color: #82ffd5;
       text-shadow: 0 0 20px #333;
   }
 
   .title h1, .title h2, .main-title h1, .main-title h2 {
-      color: #f3f3f3;
+      color: #82ffd5;
       line-height: 0.8em;
   }
 
@@ -122,197 +120,853 @@
 
       ### Carlos Buendía  ([@buendiadas](https://twitter.com/buendiadas))
 
-      ---
+    ---
 
-      # Agenda
+    # Agenda
 
-      1. Introducción
-      2. Clientes
-         - Arquitectura
-         - [Geth](#)
-            - Instalación
-            - Inicialización de parámetros
-            - Creación de una blockchain privada
-            - Comienzos con la blockchain pública
-         - testRPC
-      3. [Web3](web3.html)
-      3. [Solidity](solidity.html#2)
-      4. Ejemplos Smart Contracts
-          -Token
-         -DAO
-         -Crowdfunding
+    1. *Introducción*
+    2. Clientes
+    3. Consola
+    4. Interactuación Externa: Web3
+    5. Solidity
+    6. Ejemplos Smart Contracts
+    7. Ejercicio con Token
 
-      5. Ejercicio con Token
+    ---
+    # 1: Arquitectura de una DApp
+    ![image](img/arch-dapp.png)
+    ---
+    # Agenda
 
-      ---
+    1. Introducción
+    2. **Clientes**
+    3. Consola
+    4. Solidity
+    5. Ejemplos Smart Contracts
+    6. Ejercicio con Token
+    ---
+    # 2: Clientes
+    #### Interfaz con la blockchain capaz de recuperar y verificar información de la Blockchain
 
-      # Arquitectura de una DApp
+      - Clientes oficiales
+          - [geth](https://github.com/ethereum/go-ethereum): Cliente en Go Lang
+          - [eth](https://github.com/ethereum/webthree-umbrella): Cliente C++
+          - [pyethapp](https://github.com/ethereum/pyethapp): Cliente en Python
 
-      ![image](img/arch-dapp.png)
+      - Clientes no oficiales:
 
+          - [Parity](https://github.com/ethcore/parity): Cliente escrito por ethcore
+          - [Ethereumj](https://github.com/ethereum/ethereumj): Cliente en Java
+          - [Ruby-Ethereum](https://github.com/janx/ruby-ethereum): Cliente de Ruby
+          -Etc..
 
-      ---
+    ##### Todos los clientes deberían tener las mismas funcionalidades
 
-      # Clientes
+    Diferentes implementaciones puede dar lugar a [problemas](https://blog.ethereum.org/2016/11/25/security-alert-11242016-consensus-bug-geth-v1-4-19-v1-5-2/)
+    ---
+    # Geth
+    ### ¿Por qué Geth?
+    - Cliente más popular
+    - Compatibilidad multiplaforma
 
-      #### Interfaz con la blockchain capaz de recuperar y verificar información de la Blockchain
+    ### 3 interfaces:
+    - Linea de sub-comandos
+    - Un servidor en JSON-RPC
+    - Una consola integrada (Web3.js)
 
-        - Clientes oficiales
-            - [geth](https://github.com/ethereum/go-ethereum): Cliente en Go Lang
-            - [eth](https://github.com/ethereum/webthree-umbrella): Cliente C++
-            - [pyethapp](https://github.com/ethereum/pyethapp): Cliente en Python
+    El cliente de Ethereum es válido tanto para la red principal (Main net), como para diferentes implementaciónes (Ropsten, Private chain...)
+    ---
+    # Geth
+    ## Instalación
 
-        - Clientes no oficiales:
+    ```sh
+    $ sudo apt-get install software-properties-common
+    $ sudo add-apt-repository -y ppa:ethereum/ethereum
+    $ sudo apt-get update
+    $ sudo apt-get install ethereum
 
-            - [Parity](https://github.com/ethcore/parity): Cliente escrito por ethcore
-            - [Ethereumj](https://github.com/ethereum/ethereumj): Cliente en Java
-            - [Ruby-Ethereum](https://github.com/janx/ruby-ethereum): Cliente de Ruby
-            -Etc..
+    ```
+    Con solo esto, ya somos capaces de interactuar con Ethereum!
+    ---
 
-      ##### Todos los clientes deberían tener las mismas funcionalidades
+    # Geth
+    ## Flags
+    La ejecución de Geth admite numerosos "flags", algunos de los más importantes:
 
-      Diferentes implementaciones puede dar lugar a [problemas](https://blog.ethereum.org/2016/11/25/security-alert-11242016-consensus-bug-geth-v1-4-19-v1-5-2/)
+    |     Flag             | Descripción                        | Por defecto              |
+     ----------------- | ---------------------------- | ------------------
+    | `--networkid`           | ID de la blockchain |0 (main net)  |
+    |`--rpc`  |       Permiso a la interfaz RPC     | true |
+    |`--datadir`  |    Path que almacena la blockchain     | (Linux) .ethereum/chaindata |
+    |`--rpcapi`          |    APIs abiertas vía RPC        | web3
+    |`--rpcport`          |   Puerto de acceso a RPC        | 8545
+    | `--rpccorsdomain`| Dominios de acceso a RPC | localhost|
+    | `--port`           | Puerto de conexión para otros nodos | 30303 |
+    ---
+    # Geth
+    ## Tipos de blockchain disponibles:
+    * Main net: `network_id=0`, o sin utilizar flags
+    * Testnet (Ropsten):  `network_id=1`, o con el flag `--testnet`
+    * Private Network:  `network_id=your_own_network_id`
+    Normalmente, los contratos siguen el siguiente proceso de deployment:
+      * Prueba en una red simulada (que posteriormente veremos como testRPC)
+      * Pruebas en una red privada o testnet
+      * Deployment a Main Net.
+    En este curso comenzaremos probando las **blockchain privadas**, posteriormente se probará la **testnet**, y finalmente se utilizará **testRPC** para la simulación.
+    ---
+    # Geth
+    ### Blockchain privada
+    Dos recursos necesarios para comenzarla:
+      * Network id: Elegid el que deseeis
+      * Archivo genesis: Parámetros que definirán finalmente la blockchain (Genesis block):
+         * gasLimit: Valor que define el **total** de gas que puede ser gastado en un bloque
+         * difficulty: Valor que define el target de dificultad (Recordar dificultad mining Bitcoin).
+          En una privada, valor bajo (minado rápido)
+         * alloc: Define wallets con prelocalización de Ether
+      Información de los parámetros encontrados en el genesis block pueden ser encontrados en el [yellow paper](http://gavwood.com/paper.pdf)
+    ---
+    # Geth
 
-      ---
+    ### Ejemplo archivo génesis:
 
-      # Geth
-      ### ¿Por qué Geth?
-        - Cliente más popular
-        - Compatibilidad multiplaforma
-
-      ### 3 interfaces:
-        - Linea de sub-comandos
-        - Un servidor en JSON-RPC
-        - Una consola integrada (Web3.js)
-
-      El cliente de Ethereum es válido tanto para la red principal (Main net), como para diferentes implementaciónes (Ropsten, Private chain...)
-
-      ---
-
-      # Geth
-      ### Instalación
-
-      ```sh
-      $ sudo apt-get install software-properties-common
-      $ sudo add-apt-repository -y ppa:ethereum/ethereum
-      $ sudo apt-get update
-      $ sudo apt-get install ethereum
-
-      ```
-      Con solo esto, ya somos capaces de interactuar con Ethereum!
-
-      ---
-
-      # Geth
-      ### Flags
-      La ejecución de Geth admite numerosos "flags", algunos de los más importantes:
-
-      |     Flag             | Descripción                        | Por defecto              |
-       ----------------- | ---------------------------- | ------------------
-      | `--networkid`           | Selecciona el id de blockchain sobre la que se ejecutará |0 (main net)  |
-      |`--rpc`  |       Permiso a la interfaz RPC     | true |
-      |`--rpcapi`          |    APIs abiertas vía RPC        | web3
-      |`--rpcport`          |   Puerto de acceso a RPC        | 8545
-      | `--rpccorsdomain`| Dominios de acceso a RPC | localhost|
-      | `--port`           | Puerto de conexión para otros nodos | 30303 |
-
-      ---
-      # Geth
-      ### Blockchain privada
-
-      #### Inicialización
-
-      ````json
-      {
-          "nonce": "0x0000000000000042",
-          "timestamp": "0x0",
-          "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-          "extraData": "0x0",
-          "gasLimit": "0x8000000",
-          "difficulty": "0x400",
-          "mixhash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-          "coinbase": "0x3333333333333333333333333333333333333333",
-          "alloc": {
-          }
-      }
+    ````json
+    {
+        "nonce": "0x0000000000000042",
+        "timestamp": "0x0",
+        "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "extraData": "0x0",
+        "gasLimit": "0x8000000",
+        "difficulty": "0x400",
+        "mixhash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "coinbase": "0x3333333333333333333333333333333333333333",
+        "alloc": {
+        }
+    }
       ````
-      ```sh
-      $ geth init genesis.json
-      ```
-        Abrir ahora el archivo datadir
-      ---
+    ---
+    # Geth
+    ### Inicialización de una blockchain privada
 
-      # Geth
-      ### Blockchain privada
+    * 1: Inicialización del bloque génesis:
+    ```sh
+    geth --datadir </path/a/bloques/> init genesis.json
+    ```
+    * 2: Ejecución de la blockchain:
+    ```sh
+    $ geth + Flags...
+    ```
+    ---
+      # TestRPC
 
-      #### Ejecución
+      - Incluso las blockchain privadas son demasiado **lentas/ineficientes a la hora de desarrollar**
+      - [testRPC](https://github.com/ethereumjs/testrpc) es una Librería en JS que simula un nodo completo de una blockchain privada, o una blockchain real a partir de determinado punto
+      - Para el desarrollo de aplicaciones del curso, se utilizará esta librería.
 
-      ```bash
-      $ geth --networkid 03032017 --rpccorsdomain "*" --datadir "/home/satoshi/chain" --port "30303"  "db,eth,net,web3"
+      Ejecutar
 
-      ```
-
-      En otra terminal
-
-      ```bash
-      $ geth attach
-      ```
-
-      #### Blockchain pública
-
-      ```bash
-      $ geth
-      $ geth attach
-      ```
-      ---
-
-      #TestRPC
-
-       - Incluso las blockchain privadas son demasiado **lentas/ineficientes a la hora de desarrollar**
-       - [testRPC](https://github.com/ethereumjs/testrpc) es una Librería en JS que simula un nodo completo de una blockchain privada, o una blockchain real a partir de determinado punto
-       - Para el desarrollo de aplicaciones del curso, se utilizará esta librería.
-
-      Ejemplo
       ``` sh
-       $ testrpc
+        $ testrpc
       ```
+    ---
 
-      ---
       #TestRPC
-
 
       Options (From the Docs):
 
-        * `-a` or `--accounts`: Specify the number of accounts to generate at startup.
-        * `-b` or `--blocktime`: Specify blocktime in seconds for automatic mining. Default is 0 and no auto-mining.
-        * `-d` or `--deterministic`: Generate deterministic addresses based on a pre-defined mnemonic.
-        * `-m` or `--mnemonic`: Use a specific HD wallet mnemonic to generate initial addresses.
-        * `-p` or `--port`: Port number to listen on. Defaults to 8545.
-        * `-h` or `--hostname`: Hostname to listen on. Defaults to Node's `server.listen()` [default](https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback).
-        * `-s` or `--seed`: Use arbitrary data to generate the HD wallet mnemonic to be used.
-        * `-g` or `--gasPrice`: Use a custom Gas Price (defaults to 20000000000)
-        * `-l` or `--gasLimit`: Use a custom Gas Limit (defaults to 0x47E7C4)
-        * `-f` or `--fork`: Fork from another currently running Ethereum client at a given block. Input should be the HTTP location and port of the other client, e.g. `http://localhost:8545`. You can optionally specify the block to fork from using an `@` sign: `http://localhost:8545@1599200`.
+      * `-a` or `--accounts`: Specify the number of accounts to generate at startup.
+      * `-b` or `--blocktime`: Specify blocktime in seconds for automatic mining. Default is 0 and no auto-mining.
+      * `-d` or `--deterministic`: Generate deterministic addresses based on a pre-defined mnemonic.
+      * `-m` or `--mnemonic`: Use a specific HD wallet mnemonic to generate initial addresses.
+      * `-p` or `--port`: Port number to listen on. Defaults to 8545.
+      * `-h` or `--hostname`: Hostname to listen on. Defaults to Node's `server.listen()` [default](https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback).
+      * `-s` or `--seed`: Use arbitrary data to generate the HD wallet mnemonic to be used.
+      * `-g` or `--gasPrice`: Use a custom Gas Price (defaults to 20000000000)
+      * `-l` or `--gasLimit`: Use a custom Gas Limit (defaults to 0x47E7C4)
+      * `-f` or `--fork`: Fork from another currently running Ethereum client at a given block. Input should be the HTTP location and port of the other client, e.g. `http://localhost:8545`. You can optionally specify the block to fork from using an `@` sign: `http://localhost:8545@1599200`.
+    ---
+    # Ejercicio 1
 
-      ---
+    ##Despliegue de una blockchain privada.
 
-      #Ejemplo: Fork de blockchain para development
+    Crear una blockchain privada con los siguientes parámetros.
 
-      ####Ejecutar:
+    |     Flag          | Valor             |
+     -----------------  |  ------------------
+    | `--networkid`     | 25052017 |
+    |`--rpc`  |          true |
+    |`--datadir`        | $HOME/documents/blockchain/private_blockchain |
+    |`--rpcapi`         |  web3 |
+    |`--rpcport`        |  8546 |
+    | `--rpccorsdomain` | localhost|
+    | `--port`          | 30303 |
+    ---
+    #Ejercicio 1
+    ### Conectando al cliente
+    Una vez inicializado y corriendo la blockchain, encontraréis un archivo .ipc.
+    Conectar a la blockchain a través de IPC:
+    ```sh
+     geth attach ipc: /your/path/to/your/ipc
+    ```
+    #### ¡Ya estamos conectados a nuestro cliente y podemos comunicarnos via Web3!
+    ---
+    # Agenda
 
-      ``` sh
-       $ geth --networkid.... Port, ? rcpport?
+    1. Introducción
+    2. Clientes
+    3. **Consola**
+    4. Solidity
+    5. Ejemplos Smart Contracts
+    6. Ejercicio con Token
+    ---
+    # Consola
+    A través de la consola podemos acceder a diferentes funciones de Web3 y gestión de claves:
+    Probar interfaces utilizando como ejemplos:
+    ```sh
+     > admin // Gestión de la red
+     > eth // web3.eth
+     > personal //Gestión de claves personal
+     > miner //Gestión de minería
+    ```
+    ---
+    # Consola
+    ## Creación de una cuenta
+    - 1: A través de la interfaz eth, podemos ver las cuentas disponibles utilizando:
+    ```sh
+     > eth.accounts // Array
+     > eth.accounts[0]  //Primera cuenta
+    ```
+    - 2: Podemos crear una cuenta desde la consola, utilizando 'personal'
+    ```sh
+    > personal.newAccount()
+    ```
+    - 3: Como respuesta, nos pedirán una contraseña, que cifrará la clave privada almacenada
+    ```sh
+    Passphrase:
+    Repeat passphrase:
+    ```
+    ---
+    # Consola
+    ### Creación de una cuenta
+    - 4: Una vez obtenida la cuenta, podemos observar la aparición de una nueva cuenta utilizando eth.accounts
+    - 5: La nueva cuenta estará almacenada (cifrada con la passphrase) en el directorio `datadir/keystore`
+    ---
+    # Consola
+    ### Importación de una cuenta
+    De la misma manera que hemos creado una cuenta, podemos importarlas de carteras externas. Para ello,
+    únicamente necesitamos realizar:
+    ``` sh
+    geth account import <keyfile>
       ```
-      ``` sh
-       $ testrpc -p 8545
+    ### Exportación de una cuenta
+    Para exportar una cuenta y tratarla desde una wallet diferente, únicamente necesitamos utilizar el archivo alojado en keystore.
+    ---
+    # Ejercicio 2:
+    ##Importación de una Cuenta
+    MyEtherWallet es un ejemplo muy generalizado de empleo de Wallets.
+    Alguna vez pueden haberte recomendado utilizarla para acceder a un token sale, pero: ¿Cómo importar la wallet desde aquí?
+
+    Acceder a MyEtherWallet y conseguir importar una cuenta en vuestra wallet de Geth.
+    #### ¿Cuál es tu clave privada? ####
+    ---
+    # Ejercicio 3:
+    ## Exportación de una Cuenta
+    De la misma manera que hemos importado una cuenta podemos exportarla a MyEtherWallet, utilizando el archivo de keystore.
+
+    Exportar una Wallet de MyEtherWallet e importarla para acceder a ella desde la consola de geth.
+    ---
+    # Consola
+    ### Minería
+      - Ethereum (hasta el momento, Mayo 2017) utiliza como algoritmo de consenso Proof of Work
+      - Dificultad ajustada dinámicamente, bloques producidos cada 12 segundos de media (realmente 14)
+      - Algoritmo de Ethereum (EthHash) incluye un recurso que hace recalcular el algoritmo cada cierto tiempo, llamado DAG
+      - El DAG tiene un tamaño de al rededor de 1 GB, y tarda cierto tiempo en generarse
+    ---
+    # Consola
+    ### Minería
+      - Podemos acceder al minero y sus funciones en la consola utilizando el comando 'miner'. Principalmente se utilizarán dos funciones
+        - 1: Start
+        ``` sh
+          > miner.start()
+        ```
+        - 2: Stop
+        ``` sh
+          > miner.stop()
+        ```
+    Ejecutar el comando de 'start', **¿Qué ocurre?**
+    ---
+    # Consola
+    ### Minería
+    Al ejecutar miner.start, obtendremos un resultado como el siguiente:
+    ``` sh
+    I0526 02:22:54.754878 miner/worker.go:514] commit new work on block 4884 with 0 txs & 0 uncles. Took 290.93µs
+    I0526 02:22:59.329896 miner/unconfirmed.go:105] 🔗  ** mined block #4879** [6e362780…] reached canonical chain
+    I0526 02:22:59.329921 miner/unconfirmed.go:83] 🔨  mined potential block #4884 [afb8d8da…], waiting for 5 blocks to confirm
+    I0526 02:22:59.330157 miner/worker.go:514] commit new work on block 4885 with 0 txs & 0 uncles. Took 198.083µs
+    ```
+    Ejecutar:
+    ``` sh
+    > eth.getBalances(eth.accounts[0])
+    ```
+    ¿Qué ocurre?
+    ---
+    # Consola
+    ### Minería
+    - Para recibir las recompensas, necesitamos fijar la cuenta sobre la que se recibirán los beneficios.
+    - Realizamos esto a través del comando:
+    ``` sh
+    > miner.setEtherBase(eth.accounts[0])
+    ```
+    Podemos volver a minar, obteniendo ahora los beneficios asociados:
+    ``` sh
+    > miner.setEtherBase(eth.accounts[0])
+    ```
+    ---
+      # Consola
+      ### Transacciones
+      Recordando la estructura de las transacciones repasada en la clase anterior:
+      - Recipiente
+      - Firma
+      - Cantidad de Ether a enviar
+      - Campo datos(opcional)
+
+    Al realizar una transacción, desde consola, debemos especificar
+
+      - Emisor-from (cuenta que vamos a utilizar para la transacción)
+      - Receptor-to (cuenta que va a recibir el ETH)
+      - Valor-value (cantidad que vamos e enviar, en wei)
+    ---
+    # Consola
+    ### Transacciones
+    Todo esto, utilizando la consola con javascript, se realizaría de la siguiente manera:
+    ``` javascript
+    var sender = eth.accounts[0];
+    var receiver = eth.accounts[1];
+    var amount = web3.toWei(0.01, "ether")
+    eth.sendTransaction({from: sender, to: receiver, value: web3.toWei(1, "ether")})
+    ```
+    Observar la primera consola, qué ocurre?
+    ---
+    # Consola
+    ### Transacciones
+    A partir de aquí, podemos acceder a otras herramientas para hacer seguimiento de las transacciones en la blockchain.
+
+    - Ver el status del transaction pool
+    ``` javascript
+    > txpool.status
+    ```
+    - Ver el número de transacciones pendientes en el bloque
+    ``` javascript
+    > eth.getBlockTransactionCount("pending");
+    ```
+    - Ver el número de transacciones pendientes en el bloque
+    ``` javascript
+    > eth.getBlockTransactionCount("pending");
+    ```
+    - Ver todas las transacciones pendientes del bloque
+    eth.getBlock("pending", true).transactions
+
+      Al realizar una transacción, desde consola, debemos especificar
+      - Emisor-from (cuenta que vamos a utilizar para la transacción)
+      - Receptor-to (cuenta que va a recibir el ETH)
+      - Valor-value (cantidad que vamos e enviar, en wei)
+    ---
+
+    # Consola
+    ### Contratos
+    - En la blockchain de Ethereum los contratos residen en formato binario (bytecode)
+    - Para escribirlos, se utilizan normalmente lenguajes de más alto nivel:
+        - Solidity
+        - Serpent
+        - LLL
+    - Esto necesita de un compilador. Nosotros usaremos solidity:
+
+    - La compilación/deployment/ejecución también puede realizarse a través de consola
+
+    - Sin embargo esto resulta mucho más sencillo comenzando a utilizar librerías externas: Web3
+
+    - Para ello, en lugar de utilizar el cliente geth comenzaremos a utilizar la librería testRPC
+
+      # Web3
+
+      - Principal interfaz para interactuación con la blockchain
+
+      - Ofrece, a través de javascript una [librería](https://github.com/ethereum/wiki/wiki/JavaScript-API) de herramientas completa para interactuar y desarrollar con la blockchain.
+
+      - Interactuación con otros servicios adicionales de Ethereum (keystore, whisper, swarm)
+
+      ### Ejemplos:
+
+      - Herramienta externa: Encriptación (web3.sha3())
+      - Utilización de la blockchain: web3.eth.sendTransaction(object)
+      - Utilización de servicios extra Ethereum: shh
+    ---
+
+      # Web3
+
+      - Instalación:
+
+       `npm install web3`
+
+      - Abre Geth
+
+      - Ejecuta el siguiente código: `node web3-test.js`
+
+          ```sh
+
+            var Web3 = require('web3');
+            var web3 = new Web3(
+            new Web3.providers.HttpProvider("http://localhost:8545"));
+            web3.eth.getBlock(0, function(error, result){
+                      if(!error)
+                          console.log(result)
+                      else
+                          console.error(error);
+            });
+          ```
+
+    ---
+    # Web3
+
+    ### Realización de una [transacción](https://github.com/ethereum/wiki/wiki/JavaScript-API#web3ethsendtransaction)
+
+     ``` javascript
+        var Web3 = require('web3');
+        var web3 = new Web3();
+        web3.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
+        web3.eth.sendTransaction(tx_object)
+        console.log("Balance 0" + web3.eth.getBalance(web3.eth.accounts[0]))
+        console.log( "Balance 1" + web3.eth.getBalance(web3.eth.accounts[1])
+        web3.eth.sendTransaction ({from:web3.eth.accounts[0],
+                                      to: web3.eth.accounts[1],
+                                      value: web3.toWei(1, "ether")})
+        console.log("Balance 0" + web3.eth.getBalance(web3.eth.accounts[0]))
+        console.log("Balance 1" + web3.eth.getBalance(web3.eth.accounts[1])
+    ```
+    ---
+
+    # Web3
+
+    ### Ejercicio
+
+    #### A través de el ejemplo anterior y los ejemplos de transacciones anteriores, crea el fichero tx_sender.js
+
+
+
+    ---
+
+    # Web3
+
+    Web3 no solo provee de herramientas propias de la blockchain de ethereum sino de cualquier facilitador útil para el desarrollo en Ethereum.
+    Un ejemplo es la utilización de Hashes:
+
+
+      #### Encriptando con [KECCAK-256](http://keccak.noekeon.org)
+
+
+      - En un nuevo archivo ejecuta
+        ``` javascript
+          $ node
+          (Initialize web3)
+          web3.sha3("Hello Ethereum Course")
+        ```
+    ---
+    # Web3
+
+
+    ###Compilando un contrato
+
+    Crea el siguiente archivo (compilecontract.js):
+
+
+    ```Javascript
+    var Web3 = require('web3');
+    var web3 = new Web3();
+    web3.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
+    var source = 'pragma solidity ^0.4.6; contract demo {string public name = "buendiadas"; function changeName(string _newName){name = _newName; } }';
+    var compiled = web3.eth.compile.solidity(source);
+    console.log(compiled);
+
+    console.log("ABI")
+    console.log( compiled.info.abiDefinition);
+    ```
+    Ejecuta:
+    ```sh
+    $ node compilecontract.js
+    ```
+    ---
+
+    # Web3
+
+    ### Subiendo el contrato
+
+    Copia las anteriores lineas en un nuevo fichero(e.g. contractupload.js), y añade las siguientes:
+
+      ```Javascript
+          var nameContract= web3.eth.contract(compiled.info.abiDefinition);
+          var uploadedContract = nameContract.new({from:web3.eth.accounts[0], data: compiled.code, gas: 1000000}, function(e, contract){
+            if(!e) {
+
+              if(!contract.address) {
+                console.log("Contract transaction send: TransactionHash: " + contract.transactionHash + " waiting to be mined...");
+
+              } else {
+                console.log("Contract mined! Address: " + contract.address);
+                console.log(contract);
+              }
+            }
+          });
+
+        ```
+
+    En terminal:
+
+    ```sh
+    $ node contractupload.js
+    ```
+
+    ---
+    # Web3
+
+    ### Llamando a un contrato
+
+    Recupera los valores ABI, y contract Address del valor anterior
+
+    Con estos, sustituye en el siguiente script, y crea un nuevo fichero (getname.js)
+
+    ```Javascript
+      var Web3 = require('web3');
+      var web3 = new Web3();
+      web3.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
+
+      var ABI = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_newName","typ$
+      var contractAddress = "0xbbfd34ccf4bd62ec0d33d8b25c687c34888941af";
+      var contract = web3.eth.contract(ABI).at(contractAddress);
+
+      contract.name.call(function(data){
+              console.log(data)
+      });
+    ```
+    ---
+    # Web3
+    ### Conectando con solidity
+
+    Recupera los valores ABI, y contract Address del valor anterior
+
+    Accede a el IDE oficial (REMIX) : http://ethereum.github.io/browser-solidity/#version=soljson-v0.4.9+commit.364da425.js
+
+    ---
+
+    # Consola
+    ### Contratos
+    - En la blockchain de Ethereum los contratos residen en formato binario (bytecode)
+    - Para escribirlos, se utilizan normalmente lenguajes de más alto nivel:
+        - Solidity
+        - Serpent
+        - LLL
+    - Esto necesita de un compilador. En el caso de Ethereum, el compilador viene por defecto en la instalación.
+    ---
+    # Web3
+
+    - Principal interfaz para interactuación con la blockchain
+
+    - Ofrece, a través de javascript una [librería](https://github.com/ethereum/wiki/wiki/JavaScript-API) de herramientas completa para interactuar y desarrollar con la blockchain.
+
+    - Interactuación con otros servicios adicionales de Ethereum (keystore, whisper, swarm)
+
+    ### Ejemplos:
+
+    - Herramienta externa: Encriptación (web3.sha3())
+    - Utilización de la blockchain: web3.eth.sendTransaction(object)
+    - Utilización de servicios extra Ethereum: shh
+    ---
+
+    # Web3
+
+    - Instalación:
+
+     `npm install web3`
+
+    - Abre Geth
+
+     $ geth --networkid 03032017 --rpccorsdomain "*" --datadir "/home/satoshi/chain" --port "30303"  "db,eth,net,web3"
+
+
+    - Ejecuta el siguiente código: `node web3-test.js`
+
+        ```sh
+
+          var Web3 = require('web3');
+          var web3 = new Web3(
+          new Web3.providers.HttpProvider("http://localhost:8545"));
+          web3.eth.getBlock(0, function(error, result){
+                    if(!error)
+                        console.log(result)
+                    else
+                        console.error(error);
+          });
+        ```
+
+    ---
+
+
+
+    # Web3
+
+      ### Realización de una [transacción](https://github.com/ethereum/wiki/wiki/JavaScript-API#web3ethsendtransaction)
+
+      Recordamos el objeto transaction:
+
+       *from, *to, *value, *data, *nonce
+
+       Transacción entre cuentas externas -->   Campo value > 0, no data
+       ```sh
+          > web3.eth.sendTransaction(tx_object)
+          > web3.eth.sendTransaction ({from:web3.eth.accounts[0],
+                                        to: web3.eth.accounts[1],
+                                        value: web3.toWei(1, "ether")})
+          > web3.eth.getBalance(web3.eth.accounts[0])
+          > web3.eth.getBalance(web3.eth.accounts[1])
       ```
+    ---
+
+    # Solidity
+
+    ### Estructura de un contrato
+
+      - Similar a clases en OOP
+
+      ```javascript
+        contract mortal is owned {
+
+        }
+      ```
+
+      - Referencia a Internal Storage (Variables de estado)
+        (Recordar account object)
+
+          - Nonce
+          - Ether balance
+          - Contract code
+          - The account's storage
+
+
+      - Computación descentralizada (functions)
+    ---
+
+     #Solidity
+
+     ###Estructura de un contrato
+
+     - 1: Versión pragma
+
+        ```
+        0.x.0
+        ````
+        or
+
+        ```x.0.0```
+
+        pragma solidity ^0.4.0;
+
+      -2: Importando otros contratos:
+
+        import "filename";
+
+    ---
+
+    # Solidity
+
+    ### Tipos
+
+    Solidity permite los siguientes tipos por defecto:
+
+    - bool: Variable booleana, true/failsafe
+    - uintxxx: Enteros, xxx representa el número de bits con el que se representa
+    - address: Direcciones de Ethereum (EOA, or SC). Cada address tiene asociadas:
+      - balance
+      - transfer
+    - bytes: An empty array of bites
+    - string: An string
+
+    ---
+    # Solidity
+
+    ### Variables de estado
+
+    Almacenadas en el storage asociado a cada account
+
+      ```javascript
+
+      contract demo {
+
+        string public name = "buendiadas";
+        ....
+
+      ```
+    ---
+
+    # Solidity
+
+    ### Funciones
+
+    Computación descentralizada en función de los inputs de la transacción.
+
+    ```javascript
+    function changeName(string _newName){
+        name = _newName; }
+
+
+    }
+    ```
+    ---
+    # Solidity
+
+    ### Modificadores
+
+    Ejecución de condiciones previas a la ejecución de dicho contrato. Suelen utilizarse para generar restricciones
+
+    ```javascript
+    pragma solidity ^0.4.0;
+
+    contract owned {
+        function owned() { owner = msg.sender; }
+        address owner;
+
+        modifier onlyOwner {
+            if (msg.sender != owner)
+                throw;
+            _;
+        }
+    }
+
+
+    contract mortal is owned {
+
+    }
+
+    }
+    ```
+    ---
+    # Solidity
+
+    ###Funciones
+
+    Computación descentralizada en función de los inputs de la transacción.
+
+    ```javascript
+    function changeName(string _newName){
+        name = _newName; }
+
+
+    }
+    ```
+    ---
+    # Eventos
+
+    Log de Ethereum (Recordar blockchain structure). Permiten subir información externa a la blockchain, donde se almacena únicamente el hash.
+
+    ```javascript
+    event NameChanged(string _oldName, string _newName);
+    function changeName(string _newName){
+        name = _newName;
+        NameChanged(name, _newName);
+
+      }
+    }
+    ```
+    ---
+
+    #Ejemplo: Metacoin
+    ```javascript
+
+    contract MetaCoin {
+      mapping (address => uint) balances;
+
+
+    	function MetaCoin() {
+    		balances[tx.origin] = 10000;
+    	}
+
+    	function sendCoin(address receiver, uint amount) returns(bool sufficient) {
+    		if (balances[msg.sender] < amount) return false;
+    		balances[msg.sender] -= amount;
+    		balances[receiver] += amount;
+    		return true;
+    	}
+
+    	function getBalance(address addr) returns(uint) {
+    		return balances[addr];
+    	}
+    }
+    ```
+    ---
+
+    #Ejercicio 4
+
+    ### Registro de nombres
+
+    A partir de los ejemplos mostrados en la definición de los diferentes componentes, escribir un SC (ENS) que :
+
+      - Tenga un registro de nombres web
+      - El registro de nombre solo puede ser editado por la persona a la que está asociado
+      - Cualquier persona puede acceder al nombre de una persona
+      - Al cambiar de nombre, se lance un evento.
+      - ++*PRO*: El linkeo del nombre no se hace mediante el nombre en si, sino mediante su Hash
+
+    ---
+
+    #Ejercicio 5
+
+    ### Creación moneda
+
+    A partir de el contrato anterior, crear un token que tenga las siguientes reglas económicas:
+
+      - Existe una dirección central, que carga una fee por cada transacción que se realiza.
+      - Esta fee puede ser cargada de dos formas:
+         - **Fácil**: Enviando por cada transacción un porcentaje de los tokens
+         - **Medio**: Modificando el total de circulación de moneda (diluyendo a los holders)
+      - Adicional: La dirección seleccionada puede decidir bloquear la posibilidad de transacciones.
+      - ++ : Probar a utilizar la restricción a través de un modifier.
+      - +++: Modificar las condiciones para que la lógica del dueño provenga de un contrato "owner"
+
+    ---
+    #ERC20 Token Standard
+
+    - Debido a la aparición de diferentes tokens con diferentes tipos de implementaciones, la integración en estructuras más complejas era complicada
+    - La creación de un Standard en la creación de Tokens permitió la integración en plataformas como
+    - También se eliminan problemas de seguridad asociados a la creación de cada token
+    - En la actualidad, prácticamente todos los tokens sobre Ethereum se hacen sobre esta interfaz.
+
+    La especificación del estandard puede encontrarse en el siguiente [link](https://github.com/ethereum/EIPs/issues/20)
+
+    ---
+
+    # Ejemplo: ICO MatchPool
+
+    https://github.com/Matchpool/contracts
+
+    - ¿Cómo asocia los Tokens?
+
+    - ¿Quién se queda el Ether que se recibe?
+
+    - ¿Qué periodos hay de precios?
+
+    - ¿Cuántos tokens hay en total?
+
+    - ¿Cuánto tiempo dura la ICO?
+
+    - ¿Cuánto dinero almacena el contrato?
+
+    ---
+
+
 
     </textarea>
 
     <a href="ethereum2.html">
 
 
-    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    <script src="http://gnab.github.io/remark/downloads/remark-latest.min.js">
     </script>
     <script>
       var slideshow = remark.create();
