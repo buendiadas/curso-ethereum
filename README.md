@@ -4,9 +4,8 @@ Slides created for the [Ethereum Madrid's Ethereum for Developers](http://ethere
 
 Agenda: 
 
- - [Intro to Ethereum](https://buendiadas.github.io/ethereum.html#1)
- - [Web3 practices](https://buendiadas.github.io/web3.html#1)
- - [Intro to solidity and DApps](https://buendiadas.github.io/solidity.html#1)
+
+Check the material on the following [link] (https://buendiadas.github.io/res/curso_ethereum/ethereum.html)
 
 # Dependences 
 
